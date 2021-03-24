@@ -1,0 +1,43 @@
+// String + DP solution: reduce the palindrome check to O(1) by reusing some previous computation
+// Time: O(n ^ 2), 54ms
+// Space: O(n ^ 2), 37.6mb
+class Solution {
+    public String longestPalindrome(String s) {
+        // Corner case
+        if(s.length() == 0) return "";
+        
+        // DP table: DP[i][j]: if [i, j] is a palindrome string
+        boolean[][] DP = new boolean[s.length()][s.length()];
+        
+        // Max len of palindrome substring and the begining pos
+        int max = 1, start = 0;
+        
+        // Base case 1: single char
+        for(int i = 0; i < s.length(); i++) {
+            DP[i][i] = true;
+        }
+        
+        // Base case 2: two chars
+        for(int i = 0; i < s.length() - 1; i++) {
+            DP[i][i + 1] = s.charAt(i) == s.charAt(i + 1);
+            if(DP[i][i + 1]) {
+                max = 2;
+                start = i;
+            }
+        }
+        
+        
+        // Fill the table diagonally and return the last longest palindromic susbtring
+        for(int l = 2; l < s.length(); l++) {
+            for(int i = 0; i + l< s.length(); i++) {
+                DP[i][i + l] = DP[i + 1][i + l - 1] && s.charAt(i) == s.charAt(i + l);
+                if(DP[i][i + l]) {
+                    max = l + 1;
+                    start = i;
+                }
+            }
+        }
+        
+        return s.substring(start, start + max);
+    }
+}
